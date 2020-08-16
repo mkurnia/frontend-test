@@ -1,0 +1,50 @@
+.is-vertical-middle {
+  top: 50%;
+	transform: translateY(-70%);
+}
+
+.is-search-box {
+  .is-search-header {
+    padding-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img, .field {
+      align-items: stretch;
+      display: block;
+      flex-basis: 0;
+      flex-grow: 1;
+      flex-shrink: 1;
+      min-height: -webkit-min-content;
+      min-height: -moz-min-content;
+      min-height: min-content;
+    }
+    img {
+      width: 200px;
+      flex: none;
+      margin-right: 30px;
+    }
+    // .field {}
+  }
+  .control.has-icons-right {
+    .input {
+      padding-right: 6rem;
+    }
+    .is-input-button.is-right {
+      width: auto;
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 0.3rem;
+    }
+  }
+  .list-search {
+    min-height: 600px;
+    text-align: left;
+    .content {
+      margin-bottom: 2rem;
+      p {margin: 0;}
+      h4 {margin: 0 0 0.5rem;}
+    }
+  }
+}
