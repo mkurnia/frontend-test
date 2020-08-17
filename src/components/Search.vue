@@ -97,8 +97,6 @@
 <script>
 import moment from 'moment'
 
-const COVID_API = 'https://covid-19-data.p.rapidapi.com';
-
 export default {
   name: 'Search',
   data() {
@@ -124,7 +122,7 @@ export default {
       return this.latestDateUpdate = date
     },
     getLatestTotal() {
-      return fetch(`${COVID_API}/totals/?format=json`, {
+      return fetch(`https://covid-19-data.p.rapidapi.com/totals/?format=json`, {
         method: "GET",
         "headers": {
           "x-rapidapi-host": "covid-19-data.p.rapidapi.com",
@@ -155,7 +153,7 @@ export default {
     },
     getSearch(endpoint, query) {
       this.loading = true;
-      return fetch(`${COVID_API}/country/${endpoint}/?format=json${query}`, {
+      return fetch(`https://covid-19-data.p.rapidapi.com/country/${endpoint}/?format=json${query}`, {
         method: "GET",
         "headers": {
           "x-rapidapi-host": "covid-19-data.p.rapidapi.com",
