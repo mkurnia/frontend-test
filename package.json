@@ -10,7 +10,10 @@
   "dependencies": {
     "buefy": "^0.8.20",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "momen": "0.0.1-security",
+    "moment": "^2.27.0",
+    "vue": "^2.6.11",
+    "vue-moment": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

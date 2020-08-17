@@ -1,32 +1,84 @@
 <template>
-  <div class="container is-search-box" :class="[isListSearch ? 'is-list-search' : 'is-vertical-middle']">
+  <div class="container is-search-box is-list-search">
     <div class="columns is-mobile">
-      <div class="column" :class="[isListSearch ? 'is-search-header' : 'is-three-fifths is-offset-one-fifth']">
-        <img alt="logo" src="~@/assets/logo-search.png" width="500">
+      <div class="column is-search-header">
+        <img alt="logo" src="~@/assets/logo-search.png" class="logo">
+      </div>
+    </div>
+    <div class="columns is-mobile list-search is-multiline">
+      <div class="column is-full">
+        <h1 class="is-size-3 m-b-10">Global Situation</h1>
+        <div class="global-date">
+          <span>Data Change: {{globalLatestData.lastChange}}</span>
+          <span>Data Update: {{globalLatestData.lastUpdate}}</span>
+        </div>
+      </div>
+      <div class="column" v-for="(latest, i) in latestData" :key="`covid-${i}`">
+        <div class="card">
+          <div class="card-content">
+            <p class="title is-capitalized" :class="latest.name">Total {{latest.name}}</p>
+            <p class="subtitle">{{latest.total}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="column is-full">
+        <hr>
+        <h1 class="is-size-3 m-b-10">Search by Country</h1>
         <b-field>
           <div class="control has-icons-right">
-            <input v-model="search" class="input is-medium" type="search" placeholder="Search..." v-on:keyup.enter="goToSearch">
+            <input v-model="search" class="input is-medium" type="search" placeholder="Search by Country..." v-on:keyup.enter="goToSearch()">
             <span class="is-input-button is-right">
-              <b-button type="is-primary" @click="goToSearch">Search</b-button>
+              <b-button type="is-primary" @click="goToSearch()">Search</b-button>
             </span>
           </div>
         </b-field>
       </div>
-    </div>
-    <div class="columns is-mobile list-search" v-if="isListSearch">
-      <div class="column" v-if="loading">
+      <div class="column is-full" v-if="loading">
         <b-loading :is-full-page="true" :active.sync="loading" :can-cancel="false"></b-loading>
       </div>
-      <div class="column" v-else-if="listData.length && !loading">
-        <ul>
-          <li class="content" v-for="(lists, index) in listData" :key="`list-${index}`">
-            <a :href="lists.link">
-              <p>{{lists.link}}</p>
-              <h4>{{lists.title}}</h4>
-            </a>
-            <p>{{lists.description}}</p>
-          </li>
-        </ul>
+      <div class="column is-full" v-else-if="!loading">
+        <b-table :data="listData">
+          <template v-if="!loading && !listData.length" #empty>
+            <div class="empty-data">
+              <img src="~@/assets/no-data-found.png" alt="no data found" width="140" class="m-b-20">
+              <p class="is-size-4">No data found</p>
+            </div>
+          </template>
+
+          <template #default="props">
+            <b-table-column field="country" label="Country" width="190">
+              <template #header="{ column }" >
+                {{column.label}}
+              </template>
+              <img :src="`https://www.countryflags.io/${props.row.code}/shiny/64.png`" alt="props.row.code">
+              <span>{{ props.row.country }}</span>
+            </b-table-column>
+            <b-table-column field="confirmed" label="Total Confirmed" width="190">
+              <template #header="{ column }" >
+                {{column.label}}
+              </template>
+              {{ props.row.confirmed }}
+            </b-table-column>
+            <b-table-column field="critical" label="Total Critical" width="190">
+              <template #header="{ column }" >
+                {{column.label}}
+              </template>
+              {{ props.row.critical }}
+            </b-table-column>
+            <b-table-column field="deaths" label="Total Deaths" width="190">
+              <template #header="{ column }" >
+                {{column.label}}
+              </template>
+              {{ props.row.deaths }}
+            </b-table-column>
+            <b-table-column field="recovered" label="Total Recovered" width="190">
+              <template #header="{ column }" >
+                {{column.label}}
+              </template>
+              {{ props.row.recovered }}
+            </b-table-column>
+          </template>
+        </b-table>
       </div>
       <div class="column" v-else>kosong</div>
     </div>
@@ -35,31 +87,65 @@
 </template>
 
 <script>
-const GOOGLE_API = 'https://google-search3.p.rapidapi.com/api/v1/';
+const COVID_API = 'https://covid-19-data.p.rapidapi.com/';
 
 export default {
   name: 'Search',
   data() {
     return {
       search: '',
-      isListSearch: false,
       loading: true,
+      globalLatestData: {},
+      latestData: {},
       listData: []
     }
   },
+  mounted() {
+    this.getLatestTotal();
+    this.getSearch('all', '');
+  },
   methods: {
-    googleSearch(query) {
-      this.loading = true;
-      return fetch(`${GOOGLE_API}search/num=50&q=${query}`, {
+    getLatestTotal() {
+      return fetch(`${COVID_API}/totals/?format=json`, {
         method: "GET",
         "headers": {
-          "x-rapidapi-host": "google-search3.p.rapidapi.com",
+          "x-rapidapi-host": "covid-19-data.p.rapidapi.com",
           "x-rapidapi-key": "de7fba554emshfb9b74c9826879ep1cb6bcjsn41ac9441cbc4",
         }
       })
       .then(response => response.json())
       .then(response => {
-        this.listData = response.results
+        this.globalLatestData = response[0];
+        this.latestData = [
+          {name: 'confirmed', total: response[0].confirmed},
+          {name: 'critical', total: response[0].critical},
+          {name: 'deaths', total: response[0].deaths},
+          {name: 'recovered', total: response[0].recovered}
+        ];
+      })
+      .catch(err => {
+        this.$buefy.notification.open({
+          duration: 5000,
+          message: `please check your internet connection and try again`,
+          position: 'is-bottom-right',
+          type: 'is-danger',
+          hasIcon: false
+        })
+        throw err
+      })
+    },
+    getSearch(endpoint, query) {
+      this.loading = true;
+      return fetch(`${COVID_API}/country/${endpoint}/?format=json${query}`, {
+        method: "GET",
+        "headers": {
+          "x-rapidapi-host": "covid-19-data.p.rapidapi.com",
+          "x-rapidapi-key": "de7fba554emshfb9b74c9826879ep1cb6bcjsn41ac9441cbc4",
+        }
+      })
+      .then(response => response.json())
+      .then(response => {
+        this.listData = response
       })
       .catch(err => {
         this.$buefy.notification.open({
@@ -75,13 +161,13 @@ export default {
         this.loading = false
       })
     },
-    googleSearchImage() {},
     goToSearch() {
       const searchValue = this.search;
-      const construct = searchValue.replace(/\s+/g, '+');
+      const construct = searchValue.replace(/\s+/g, '%20');
       if(construct) {
-        this.isListSearch = true
-        this.googleSearch(construct);
+        this.getSearch('', `&name=${construct}`);
+      } else {
+        this.getSearch('all', '');
       }
     }
   }

@@ -1,30 +1,20 @@
-.is-vertical-middle {
-  top: 50%;
-	transform: translateY(-70%);
-}
+// .is-vertical-middle {
+//   top: 50%;
+// 	transform: translateY(-50%);
+// }
+.m-b-10 {margin-bottom: 10px !important;}
+.m-b-20 {margin-bottom: 20px !important;}
 
 .is-search-box {
+  .logo {margin-bottom: 30px;}
   .is-search-header {
     padding-top: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    img, .field {
-      align-items: stretch;
-      display: block;
-      flex-basis: 0;
-      flex-grow: 1;
-      flex-shrink: 1;
-      min-height: -webkit-min-content;
-      min-height: -moz-min-content;
-      min-height: min-content;
-    }
-    img {
-      width: 200px;
+    .logo {
+      width: 300px;
       flex: none;
       margin-right: 30px;
+      margin-bottom: 0;
     }
-    // .field {}
   }
   .control.has-icons-right {
     .input {
@@ -41,10 +31,51 @@
   .list-search {
     min-height: 600px;
     text-align: left;
-    .content {
-      margin-bottom: 2rem;
-      p {margin: 0;}
-      h4 {margin: 0 0 0.5rem;}
+    .global-date {
+      span {
+        &::after {
+          content: '|';
+          padding: 0 7px;
+        }
+        &:last-child::after {display: none;}
+      }
     }
+    .card {
+      .card-content {
+        .title {
+          &.confirmed {color: hsl(0, 0%, 48%);}
+          &.critical {color: hsl(48, 100%, 67%);}
+          &.deaths {color: hsl(348, 100%, 61%);}
+          &.recovered {color: hsl(141, 71%, 48%);}
+        }
+      }
+    }
+    .is-empty {
+      height: 400px;
+      .empty-data {
+        text-align: center;
+      }
+    }
+    .table {
+      tr {
+        td {
+          vertical-align: middle;
+          img {
+            vertical-align: middle;
+            margin-right: 15px;
+          }
+        }
+      }
+    }
+    // .tab-content {
+    //   padding-left: 0;
+    //   padding-right: 0;
+    // }
+    // .content {
+    //   width: 100%;
+    //   margin-bottom: 2rem;
+    //   p {margin: 0;}
+    //   h4 {margin: 0 0 0.5rem;}
+    // }
   }
 }
