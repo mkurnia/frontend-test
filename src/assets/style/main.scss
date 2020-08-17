@@ -31,8 +31,22 @@
   .list-search {
     min-height: 600px;
     text-align: left;
+    .global-filter {
+      float: left;
+      .field {
+        .label {
+          margin: 0;
+        }
+        .label, .datepicker {
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+    }
     .global-date {
+      float: right;
       span {
+        font-weight: 600;
         &::after {
           content: '|';
           padding: 0 7px;

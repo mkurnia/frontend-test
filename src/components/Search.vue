@@ -8,9 +8,17 @@
     <div class="columns is-mobile list-search is-multiline">
       <div class="column is-full">
         <h1 class="is-size-3 m-b-10">Global Situation</h1>
+        <div class="global-filter">
+          <b-field label="Filter by date: ">
+            <b-datepicker
+              v-model="date"
+              placeholder="Click to select..."
+              :max-date="maxDate">
+            </b-datepicker>
+          </b-field>
+        </div>
         <div class="global-date">
-          <span>Data Change: {{globalLatestData.lastChange}}</span>
-          <span>Data Update: {{globalLatestData.lastUpdate}}</span>
+          <span>Data Update: <span class="has-text-weight-normal">{{latestDateUpdate}}</span></span>
         </div>
       </div>
       <div class="column" v-for="(latest, i) in latestData" :key="`covid-${i}`">
@@ -87,17 +95,23 @@
 </template>
 
 <script>
-const COVID_API = 'https://covid-19-data.p.rapidapi.com/';
+import moment from 'moment'
+
+const COVID_API = 'https://covid-19-data.p.rapidapi.com';
 
 export default {
   name: 'Search',
   data() {
+    const today = new Date()
     return {
       search: '',
       loading: true,
       globalLatestData: {},
       latestData: {},
-      listData: []
+      listData: [],
+      latestDateUpdate: '',
+      date: new Date(),
+      maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
     }
   },
   mounted() {
@@ -105,6 +119,10 @@ export default {
     this.getSearch('all', '');
   },
   methods: {
+    constructDate(val) {
+      const date = moment(val).format("YYYY-MM-DD")
+      return this.latestDateUpdate = date
+    },
     getLatestTotal() {
       return fetch(`${COVID_API}/totals/?format=json`, {
         method: "GET",
@@ -116,6 +134,7 @@ export default {
       .then(response => response.json())
       .then(response => {
         this.globalLatestData = response[0];
+        this.constructDate(response[0].lastUpdate);
         this.latestData = [
           {name: 'confirmed', total: response[0].confirmed},
           {name: 'critical', total: response[0].critical},
